@@ -5,4 +5,5 @@
     <string name="favorite">Favorite</string>
     <string name="recipes_fragment">Recipes</string>
     <string name="favorite_recipes_fragment">Favorite</string>
+    <string name="api_key">0339a13f9b4b4738a8605f7634fefec7</string>
 </resources>

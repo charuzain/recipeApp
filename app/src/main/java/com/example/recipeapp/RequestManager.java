@@ -16,4 +16,13 @@ public class RequestManager {
     public RequestManager(Context context) {
         this.context = context;
     }
+    // Create Model call for API Response
+    //Create interface for Random Recipe API Call
+
+    //Interface
+    private interface GetRandomRecipe{
+
+    }
+
+
 }
