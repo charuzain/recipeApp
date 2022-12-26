@@ -1,6 +1,7 @@
 package com.example.recipeapp;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.recipeapp.Adapters.RandomRecipeAdapter;
 import com.example.recipeapp.Listeners.RandomRecipeResponseListener;
+import com.example.recipeapp.Listeners.RecipeClickListener;
 import com.example.recipeapp.Models.RandomRecipeApiResponse;
 
 import java.util.ArrayList;
@@ -117,7 +119,7 @@ public class RecipesFragment extends Fragment {
         @Override
         public void didFetch(RandomRecipeApiResponse response, String message) {
             dialog.dismiss();
-            randomRecipeAdapter = new RandomRecipeAdapter(getActivity() , response.recipes);
+            randomRecipeAdapter = new RandomRecipeAdapter(getActivity() , response.recipes,recipeClickListener);
             recyclerView.setAdapter(randomRecipeAdapter);
         }
 
@@ -138,6 +140,18 @@ public class RecipesFragment extends Fragment {
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    };
+
+    private final RecipeClickListener recipeClickListener = new RecipeClickListener() {
+        @Override
+        public void onRecipeClicked(String id) {
+            Toast.makeText(getActivity(),id,Toast.LENGTH_SHORT).show();
+
+            startActivity(new Intent(getActivity(),RecipeDetailActivity.class)
+                    .putExtra("id",id));
+
 
         }
     };

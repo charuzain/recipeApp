@@ -3,7 +3,9 @@ package com.example.recipeapp;
 import android.content.Context;
 
 import com.example.recipeapp.Listeners.RandomRecipeResponseListener;
+import com.example.recipeapp.Listeners.RecipeDetailListener;
 import com.example.recipeapp.Models.RandomRecipeApiResponse;
+import com.example.recipeapp.Models.RecipeDetailResponse;
 
 import java.util.List;
 
@@ -13,6 +15,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class RequestManager {
@@ -49,6 +52,27 @@ public class RequestManager {
 
 
     }
+
+    public void getRecipeDetails(RecipeDetailListener listener , int id){
+        CallRecipeDetails callRecipeDetails = retrofit.create(CallRecipeDetails.class);
+        Call<RecipeDetailResponse> call = callRecipeDetails.callRecipeDetails(id , context.getString(R.string.api_key));
+        call.enqueue(new Callback<RecipeDetailResponse>() {
+            @Override
+            public void onResponse(Call<RecipeDetailResponse> call, Response<RecipeDetailResponse> response) {
+                if (!response.isSuccessful()) {
+                    listener.didError(response.message());
+                    return;
+                }
+                listener.didFetch(response.body(), response.message());
+            }
+
+            @Override
+            public void onFailure(Call<RecipeDetailResponse> call, Throwable t) {
+                listener.didError(t.getMessage());
+
+            }
+        });
+    }
     // Create Model call for API Response
     //Create interface for Random Recipe API Call
 
@@ -59,6 +83,18 @@ public class RequestManager {
                 @Query("apiKey") String apiKey,
                 @Query("number") String number,
                 @Query("tags") List<String> tags
+
+        );
+
+    }
+
+    private interface CallRecipeDetails {
+        @GET("recipes/{id}/information")
+        Call<RecipeDetailResponse> callRecipeDetails(
+                @Path("id") int id,
+                @Query("apiKey") String apiKey
+//                @Query("number") String number,
+//                @Query("tags") List<String> tags
 
         );
 
