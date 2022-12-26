@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +34,7 @@ public class RecipesFragment extends Fragment {
     RecyclerView recyclerView;
     List<String> tags = new ArrayList<>();
     Spinner spinner;
+    SearchView searchView;
 
 
 
@@ -54,19 +56,10 @@ public class RecipesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         dialog = new ProgressDialog(getActivity());
+
+
+
         dialog.setTitle("loading..");
-
-
-//        spinner = view.findViewById(R.id.spinner_tags);
-//        ArrayAdapter arrayAdapter = ArrayAdapter.createFromResource(
-//                getActivity(),
-//                R.array.tags,
-//                R.layout.spinner_text
-//        );
-//        arrayAdapter.setDropDownViewResource(R.layout.spinner_inner_text);
-//        spinner.setAdapter(arrayAdapter);
-//        spinner.setOnItemSelectedListener(spinnerSelectedListener);
-
         manager = new RequestManager(getActivity());
         manager.getRandomRecipe(randomRecipeResponseListener,tags);
         dialog.show();
@@ -80,7 +73,33 @@ public class RecipesFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_recipes, container, false);
         recyclerView = view.findViewById(R.id.recycler_random);
-                spinner = view.findViewById(R.id.spinner_tags);
+
+
+
+        searchView = view.findViewById(R.id.searchView_home);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                tags.clear();
+                tags.add(query);
+                manager.getRandomRecipe(randomRecipeResponseListener,tags);
+                dialog.show();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+
+
+
+
+        spinner = view.findViewById(R.id.spinner_tags);
+
         ArrayAdapter arrayAdapter = ArrayAdapter.createFromResource(
                 getActivity(),
                 R.array.tags,
@@ -115,11 +134,6 @@ public class RecipesFragment extends Fragment {
             tags.add(adapterView.getSelectedItem().toString().toLowerCase());
             Toast.makeText(getActivity(), "Selected" + adapterView.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
             manager.getRandomRecipe(randomRecipeResponseListener,tags);
-
-
-
-//            recyclerView.setVisibility(View.GONE);
-//            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
