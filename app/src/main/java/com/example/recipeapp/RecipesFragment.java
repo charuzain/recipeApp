@@ -12,11 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.recipeapp.Adapters.RandomRecipeAdapter;
 import com.example.recipeapp.Listeners.RandomRecipeResponseListener;
 import com.example.recipeapp.Models.RandomRecipeApiResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RecipesFragment extends Fragment {
@@ -25,12 +31,9 @@ public class RecipesFragment extends Fragment {
     RequestManager manager;
     RandomRecipeAdapter randomRecipeAdapter;
     RecyclerView recyclerView;
+    List<String> tags = new ArrayList<>();
+    Spinner spinner;
 
-//        dialog = new ProgressDialog(this);
-//        dialog.setTitle("loading..");
-//        manager = new RequestManager(this);
-//        manager.getRandomRecipe(randomRecipeResponseListener);
-//        dialog.show();
 
 
     public RecipesFragment() {
@@ -41,11 +44,7 @@ public class RecipesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        dialog = new ProgressDialog(getActivity());
-//        dialog.setTitle("loading..");
-//        manager = new RequestManager(getActivity());
-//        manager.getRandomRecipe(randomRecipeResponseListener);
-//        dialog.show();
+
 
 
     }
@@ -56,10 +55,22 @@ public class RecipesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         dialog = new ProgressDialog(getActivity());
         dialog.setTitle("loading..");
+
+
+//        spinner = view.findViewById(R.id.spinner_tags);
+//        ArrayAdapter arrayAdapter = ArrayAdapter.createFromResource(
+//                getActivity(),
+//                R.array.tags,
+//                R.layout.spinner_text
+//        );
+//        arrayAdapter.setDropDownViewResource(R.layout.spinner_inner_text);
+//        spinner.setAdapter(arrayAdapter);
+//        spinner.setOnItemSelectedListener(spinnerSelectedListener);
+
         manager = new RequestManager(getActivity());
-        manager.getRandomRecipe(randomRecipeResponseListener);
+        manager.getRandomRecipe(randomRecipeResponseListener,tags);
         dialog.show();
-//        recyclerView.setAdapter(randomRecipeAdapter);
+
 
     }
 
@@ -69,29 +80,51 @@ public class RecipesFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_recipes, container, false);
         recyclerView = view.findViewById(R.id.recycler_random);
+                spinner = view.findViewById(R.id.spinner_tags);
+        ArrayAdapter arrayAdapter = ArrayAdapter.createFromResource(
+                getActivity(),
+                R.array.tags,
+                R.layout.spinner_text
+        );
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_inner_text);
+        spinner.setAdapter(arrayAdapter);
+        spinner.setOnItemSelectedListener(spinnerSelectedListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity() , 1));
-//        recyclerView.setAdapter(randomRecipeAdapter);
-
         return view;
     }
 
-        private  final RandomRecipeResponseListener randomRecipeResponseListener = new RandomRecipeResponseListener() {
+    private  final RandomRecipeResponseListener randomRecipeResponseListener = new RandomRecipeResponseListener() {
+        @Override
+        public void didFetch(RandomRecipeApiResponse response, String message) {
+            dialog.dismiss();
+            randomRecipeAdapter = new RandomRecipeAdapter(getActivity() , response.recipes);
+            recyclerView.setAdapter(randomRecipeAdapter);
+        }
 
-
-            @Override
-            public void didFetch(RandomRecipeApiResponse response, String message) {
-                dialog.dismiss();
-//                recyclerView = findViewById(R.id.recycler_random);
-//                recyclerView.setHasFixedSize(true);
-//                recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this , 1));
-                randomRecipeAdapter = new RandomRecipeAdapter(getActivity() , response.recipes);
-                recyclerView.setAdapter(randomRecipeAdapter);
-            }
-
-            @Override
+        @Override
         public void didError(String message) {
             Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private final AdapterView.OnItemSelectedListener spinnerSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            tags.clear();
+            tags.add(adapterView.getSelectedItem().toString().toLowerCase());
+            Toast.makeText(getActivity(), "Selected" + adapterView.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+            manager.getRandomRecipe(randomRecipeResponseListener,tags);
+
+
+
+//            recyclerView.setVisibility(View.GONE);
+//            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
         }
     };
 }
