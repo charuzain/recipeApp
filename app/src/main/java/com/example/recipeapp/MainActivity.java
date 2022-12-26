@@ -2,17 +2,29 @@ package com.example.recipeapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 //import androidx.fragment.app.FragmentManager;
 //import androidx.fragment.app.FragmentTransaction;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 //import android.view.View;
 
+import com.example.recipeapp.Adapters.RandomRecipeAdapter;
+import com.example.recipeapp.Listeners.RandomRecipeResponseListener;
+import com.example.recipeapp.Models.RandomRecipeApiResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
+//ProgressDialog dialog;
+//RequestManager manager;
+//RandomRecipeAdapter randomRecipeAdapter;
+//RecyclerView recyclerView;
+
     BottomNavigationView bnView;
 
     RecipesFragment recipeFragment = new RecipesFragment();
@@ -23,7 +35,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // new code
+//        dialog = new ProgressDialog(this);
+//        dialog.setTitle("loading..");
+//        manager = new RequestManager(this);
+//        manager.getRandomRecipe(randomRecipeResponseListener);
+//        dialog.show();
+
+
         bnView = findViewById(R.id.bottomNavigationView);
+
 
         getSupportFragmentManager().beginTransaction().replace(R.id.navHostFragment , recipeFragment).commit();
 
@@ -57,4 +78,21 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+//    private  final RandomRecipeResponseListener randomRecipeResponseListener = new RandomRecipeResponseListener() {
+//        @Override
+//        public void didFetch(RandomRecipeApiResponse response, String message) {
+//            dialog.dismiss();
+//            recyclerView = findViewById(R.id.recycler_random);
+//            recyclerView.setHasFixedSize(true);
+//            recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this , 1));
+//            randomRecipeAdapter = new RandomRecipeAdapter(MainActivity.this , response.recipes);
+//            recyclerView.setAdapter(randomRecipeAdapter);
+//        }
+//
+//        @Override
+//        public void didError(String message) {
+//            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+//        }
+//    };
 }
