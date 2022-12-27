@@ -2,9 +2,11 @@ package com.example.recipeapp;
 
 import android.content.Context;
 
+import com.example.recipeapp.Listeners.InstructionsListener;
 import com.example.recipeapp.Listeners.RandomRecipeResponseListener;
 import com.example.recipeapp.Listeners.RecipeDetailListener;
 import com.example.recipeapp.Listeners.SimilarRecipesListener;
+import com.example.recipeapp.Models.InstructionsResponse;
 import com.example.recipeapp.Models.RandomRecipeApiResponse;
 import com.example.recipeapp.Models.RecipeDetailResponse;
 import com.example.recipeapp.Models.SimilarRecipeResponse;
@@ -99,6 +101,26 @@ public class RequestManager {
     });
     }
 
+    public void getInstructions(InstructionsListener listener, int id){
+        CallInstructions callInstructions = retrofit.create(CallInstructions.class);
+        Call<List<InstructionsResponse>> call = callInstructions.callInstructions(id, context.getString(R.string.api_key));
+        call.enqueue(new Callback<List<InstructionsResponse>>() {
+            @Override
+            public void onResponse(Call<List<InstructionsResponse>> call, Response<List<InstructionsResponse>> response) {
+                if (!response.isSuccessful()){
+                    listener.didError(response.message());
+                    return;
+                }
+                listener.didFetch(response.body(), response.message());
+            }
+
+            @Override
+            public void onFailure(Call<List<InstructionsResponse>> call, Throwable t) {
+                listener.didError(t.getMessage());
+            }
+        });
+    }
+
 
 
 
@@ -136,6 +158,14 @@ public class RequestManager {
         Call<List<SimilarRecipeResponse>> callSimilarRecipe(
                 @Path("id") int id,
                 @Query("number") String number,
+                @Query("apiKey") String apiKey
+        );
+    }
+
+    private interface CallInstructions{
+        @GET("recipes/{id}/analyzedInstructions")
+        Call<List<InstructionsResponse>> callInstructions(
+                @Path("id") int id,
                 @Query("apiKey") String apiKey
         );
     }

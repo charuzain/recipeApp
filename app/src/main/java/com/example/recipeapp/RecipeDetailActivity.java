@@ -14,10 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.recipeapp.Adapters.IngredientsAdapter;
+import com.example.recipeapp.Adapters.InstructionsAdapter;
 import com.example.recipeapp.Adapters.SimilarRecipeAdapter;
+import com.example.recipeapp.Listeners.InstructionsListener;
 import com.example.recipeapp.Listeners.RecipeClickListener;
 import com.example.recipeapp.Listeners.RecipeDetailListener;
 import com.example.recipeapp.Listeners.SimilarRecipesListener;
+import com.example.recipeapp.Models.InstructionsResponse;
 import com.example.recipeapp.Models.RecipeDetailResponse;
 import com.example.recipeapp.Models.SimilarRecipeResponse;
 import com.squareup.picasso.Picasso;
@@ -30,11 +33,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
     int id;
     TextView textView_meal_name ,textView_meal_source, textView_meal_summary;
     ImageView imageView_meal_image;
-    RecyclerView recycler_meal_ingredients,recycler_meal_similar;
+    RecyclerView recycler_meal_ingredients,recycler_meal_similar,recycler_meal_instructions;
     RequestManager manager;
     ProgressDialog dialog;
     IngredientsAdapter ingredientsAdapter;
     SimilarRecipeAdapter similarRecipeAdapter;
+    InstructionsAdapter instructionsAdapter;
 
 
 
@@ -57,6 +61,7 @@ id = Integer.parseInt(getIntent().getStringExtra("id"));
         manager = new RequestManager(this);
         manager.getRecipeDetails(recipeDetailListener , id);
         manager.getSimilarRecipes(similarRecipesListener,id);
+        manager.getInstructions(instructionsListener , id);
         dialog = new ProgressDialog(this);
         dialog.setTitle("Loading Recipe Details");
         dialog.show();
@@ -70,6 +75,7 @@ id = Integer.parseInt(getIntent().getStringExtra("id"));
         imageView_meal_image = findViewById(R.id.imageView_meal_image);
         recycler_meal_ingredients = findViewById(R.id.recycler_meal_ingredients);
         recycler_meal_similar = findViewById(R.id.recycler_meal_similar);
+        recycler_meal_instructions = findViewById(R.id.recycler_meal_instructions);
     }
 
 
@@ -120,6 +126,21 @@ recycler_meal_ingredients.setAdapter(ingredientsAdapter);
             startActivity(new Intent(RecipeDetailActivity.this , RecipeDetailActivity.class).putExtra("id",id));
 
 
+
+        }
+    };
+
+    private final InstructionsListener instructionsListener = new InstructionsListener() {
+        @Override
+        public void didFetch(List<InstructionsResponse> response, String message) {
+recycler_meal_instructions.setHasFixedSize(true);
+recycler_meal_instructions.setLayoutManager(new LinearLayoutManager(RecipeDetailActivity.this , LinearLayoutManager.VERTICAL , false));
+instructionsAdapter = new InstructionsAdapter(RecipeDetailActivity.this , response);
+recycler_meal_instructions.setAdapter(instructionsAdapter);
+        }
+
+        @Override
+        public void didError(String message) {
 
         }
     };
