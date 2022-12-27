@@ -14,10 +14,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.recipeapp.Adapters.IngredientsAdapter;
+import com.example.recipeapp.Adapters.SimilarRecipeAdapter;
+import com.example.recipeapp.Listeners.RecipeClickListener;
 import com.example.recipeapp.Listeners.RecipeDetailListener;
+import com.example.recipeapp.Listeners.SimilarRecipesListener;
 import com.example.recipeapp.Models.RecipeDetailResponse;
+import com.example.recipeapp.Models.SimilarRecipeResponse;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
 import java.util.Objects;
 
 public class RecipeDetailActivity extends AppCompatActivity {
@@ -25,10 +30,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
     int id;
     TextView textView_meal_name ,textView_meal_source, textView_meal_summary;
     ImageView imageView_meal_image;
-    RecyclerView recycler_meal_ingredients;
+    RecyclerView recycler_meal_ingredients,recycler_meal_similar;
     RequestManager manager;
     ProgressDialog dialog;
     IngredientsAdapter ingredientsAdapter;
+    SimilarRecipeAdapter similarRecipeAdapter;
+
 
 
 
@@ -49,6 +56,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 id = Integer.parseInt(getIntent().getStringExtra("id"));
         manager = new RequestManager(this);
         manager.getRecipeDetails(recipeDetailListener , id);
+        manager.getSimilarRecipes(similarRecipesListener,id);
         dialog = new ProgressDialog(this);
         dialog.setTitle("Loading Recipe Details");
         dialog.show();
@@ -61,6 +69,7 @@ id = Integer.parseInt(getIntent().getStringExtra("id"));
         textView_meal_summary = findViewById(R.id.textView_meal_summary);
         imageView_meal_image = findViewById(R.id.imageView_meal_image);
         recycler_meal_ingredients = findViewById(R.id.recycler_meal_ingredients);
+        recycler_meal_similar = findViewById(R.id.recycler_meal_similar);
     }
 
 
@@ -83,6 +92,34 @@ recycler_meal_ingredients.setAdapter(ingredientsAdapter);
         @Override
         public void didError(String message) {
             Toast.makeText(RecipeDetailActivity.this, message, Toast.LENGTH_SHORT).show();
+
+        }
+    };
+
+    private final SimilarRecipesListener similarRecipesListener = new SimilarRecipesListener() {
+        @Override
+        public void didFetch(List<SimilarRecipeResponse> response, String message) {
+            recycler_meal_similar.setHasFixedSize(true);
+            recycler_meal_similar.setLayoutManager(new LinearLayoutManager(RecipeDetailActivity.this , LinearLayoutManager.HORIZONTAL,false));
+            similarRecipeAdapter = new SimilarRecipeAdapter(RecipeDetailActivity.this , response,recipeClickListener);
+            recycler_meal_similar.setAdapter(similarRecipeAdapter);
+        }
+
+        @Override
+        public void didError(String message) {
+            Toast.makeText(RecipeDetailActivity.this, message, Toast.LENGTH_SHORT).show();
+
+        }
+    };
+
+
+    private final RecipeClickListener recipeClickListener = new RecipeClickListener() {
+        @Override
+        public void onRecipeClicked(String id) {
+            Toast.makeText(RecipeDetailActivity.this , id,Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(RecipeDetailActivity.this , RecipeDetailActivity.class).putExtra("id",id));
+
+
 
         }
     };

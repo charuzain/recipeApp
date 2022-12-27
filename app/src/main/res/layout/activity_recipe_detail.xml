@@ -10,12 +10,13 @@
     android:background="@color/orange">
 
     <androidx.appcompat.widget.Toolbar
-        app:title="Details"
+        app:title="Recipe Details"
         android:id="@+id/toolbar"
         app:titleTextColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/purple_500"
+        android:textAlignment="center"
 
         />
         
@@ -58,6 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="250dp"/>
 
+
                 <TextView
                     android:id="@+id/textView_meal_summary"
                     android:text="Summary"
@@ -68,9 +70,25 @@
                     android:textSize="14sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+                <TextView
+                    android:text="Similar Recipes"
+
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+
+                    android:padding="8dp"
+                    android:textSize="18sp"
+                    android:gravity="center"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_meal_similar"
+                    android:layout_margin="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
                 <TextView
-
                     android:text="Ingredients"
 
                     android:textStyle="bold"
