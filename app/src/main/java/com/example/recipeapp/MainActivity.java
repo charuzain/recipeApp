@@ -16,10 +16,11 @@ import android.widget.Toast;
 import com.example.recipeapp.Adapters.RandomRecipeAdapter;
 import com.example.recipeapp.Listeners.RandomRecipeResponseListener;
 import com.example.recipeapp.Models.RandomRecipeApiResponse;
+import com.example.recipeapp.Models.Recipe;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DBManager.DataBaseListener {
 //ProgressDialog dialog;
 //RequestManager manager;
 //RandomRecipeAdapter randomRecipeAdapter;
@@ -34,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        ((MyApp) getApplication()).dbManager.listener = this;
+//
+//        ((MyApp)getApplication()).dbManager.getDB(this);
 
         // new code
 //        dialog = new ProgressDialog(this);
@@ -76,6 +80,21 @@ public class MainActivity extends AppCompatActivity {
 
 //bnView.setSelectedItemId(R.id.recipesFragment);
 
+
+    }
+
+    @Override
+    public void insertingRecipeCompleted() {
+
+    }
+
+    @Override
+    public void alreadyinsertingRecipeCompleted() {
+
+    }
+
+    @Override
+    public void gettingRecipesCompleted(Recipe[] list) {
 
     }
 

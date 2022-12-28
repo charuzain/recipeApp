@@ -1,29 +1,40 @@
 package com.example.recipeapp;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FavoriteRecipeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class FavoriteRecipeFragment extends Fragment {
+import com.example.recipeapp.Adapters.FavoriteRecipeAdapter;
+import com.example.recipeapp.Models.Recipe;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-//
-//    // TODO: Rename and change types of parameters
-//    private String mParam1;
-//    private String mParam2;
-//
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
+
+
+public class FavoriteRecipeFragment extends Fragment  implements DBManager.DataBaseListener {
+    TextView no_data_textView;
+    ImageView no_data_imageView;
+    RecyclerView favoriteRecipeRecyclerView;
+    ArrayList<Recipe> recipe_list = new ArrayList<>(0);
+    ProgressDialog dialog;
+    FavoriteRecipeAdapter favoriteRecipeAdapter;
+
     public FavoriteRecipeFragment() {
         // Required empty public constructor
     }
@@ -46,19 +57,78 @@ public class FavoriteRecipeFragment extends Fragment {
 //        return fragment;
 //    }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
-//    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+//        setContentView(R.layout.fragment_favorite_recipe);
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Favorite recipe");
+
+//        setContentView(R.layout.fragment_favorite_recipe);
+
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorite_recipe, container, false);
+
+        View view =  inflater.inflate(R.layout.fragment_favorite_recipe, container, false);
+
+        favoriteRecipeRecyclerView = view.findViewById(R.id.favoriteRecipeRecyclerView);
+favoriteRecipeAdapter = new FavoriteRecipeAdapter(getActivity(),recipe_list);
+
+favoriteRecipeRecyclerView.setAdapter(favoriteRecipeAdapter);
+        favoriteRecipeRecyclerView.setHasFixedSize(true);
+        favoriteRecipeRecyclerView.setLayoutManager(new GridLayoutManager(getActivity() , 1));
+        no_data_textView = view.findViewById(R.id.no_data_textView);
+//favoriteRecipeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        return view;
+
     }
-}
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        ((MyApp) requireContext()).dbManager.getDB(getActivity());
+//        ((MyApp) getContext()).dbManager.getAllReceipes();
+//        ((MyApp) getContext()).dbManager.listener = this;
+
+    }
+
+    @Override
+    public void insertingRecipeCompleted() {
+        Toast.makeText(getActivity(),"Recipe is successfully added to Favourite list",Toast.LENGTH_LONG).show();
+
+    }
+
+    @Override
+    public void alreadyinsertingRecipeCompleted() {
+        Log.e("alreadyinserting::","ttt" );
+        Toast.makeText(getActivity(),"Already added",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void gettingRecipesCompleted(Recipe[] list) {
+//        recipe_list = new ArrayList( Arrays.asList(list));
+//        if(recipe_list.size() == 0){
+//            no_data_textView.setVisibility(View.VISIBLE);
+//            favoriteRecipeRecyclerView.setVisibility(View.GONE);
+//        }else{
+//            no_data_textView.setVisibility(View.GONE);
+//            favoriteRecipeRecyclerView.setVisibility(View.VISIBLE);
+//        }
+//       favoriteRecipeAdapter.list = recipe_list;
+//       favoriteRecipeAdapter.notifyDataSetChanged();
+    }
+
+    }

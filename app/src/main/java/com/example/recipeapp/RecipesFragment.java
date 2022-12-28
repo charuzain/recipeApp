@@ -23,12 +23,13 @@ import com.example.recipeapp.Adapters.RandomRecipeAdapter;
 import com.example.recipeapp.Listeners.RandomRecipeResponseListener;
 import com.example.recipeapp.Listeners.RecipeClickListener;
 import com.example.recipeapp.Models.RandomRecipeApiResponse;
+import com.example.recipeapp.Models.Recipe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class RecipesFragment extends Fragment {
+public class RecipesFragment extends Fragment implements DBManager.DataBaseListener {
 
     ProgressDialog dialog;
     RequestManager manager;
@@ -48,10 +49,16 @@ public class RecipesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        ((MyApp) getApplication()).dbManager.listener = this;
 
 
+        //----------------------------//
+
+//        ((MyApp)getApplication()).dbManager.getDB(this);
 
     }
+
+
 
 
     @Override
@@ -112,6 +119,8 @@ public class RecipesFragment extends Fragment {
         spinner.setOnItemSelectedListener(spinnerSelectedListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity() , 1));
+
+
         return view;
     }
 
@@ -134,7 +143,7 @@ public class RecipesFragment extends Fragment {
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             tags.clear();
             tags.add(adapterView.getSelectedItem().toString().toLowerCase());
-            Toast.makeText(getActivity(), "Selected" + adapterView.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Selected" + adapterView.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
             manager.getRandomRecipe(randomRecipeResponseListener,tags);
         }
 
@@ -147,7 +156,7 @@ public class RecipesFragment extends Fragment {
     private final RecipeClickListener recipeClickListener = new RecipeClickListener() {
         @Override
         public void onRecipeClicked(String id) {
-            Toast.makeText(getActivity(),id,Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(),id,Toast.LENGTH_SHORT).show();
 
             startActivity(new Intent(getActivity(),RecipeDetailActivity.class)
                     .putExtra("id",id));
@@ -155,4 +164,19 @@ public class RecipesFragment extends Fragment {
 
         }
     };
+
+    @Override
+    public void insertingRecipeCompleted() {
+        Toast.makeText(getActivity(),"Recipe is successfully added to Favourite list",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void alreadyinsertingRecipeCompleted() {
+
+    }
+
+    @Override
+    public void gettingRecipesCompleted(Recipe[] list) {
+        Toast.makeText(getActivity(),"Already added",Toast.LENGTH_LONG).show();
+    }
 }
